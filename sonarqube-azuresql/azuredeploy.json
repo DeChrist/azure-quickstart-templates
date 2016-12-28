@@ -30,8 +30,6 @@
         "description": "Password for the SonarQube VM Admin account"
       }
     },
-
-
     "sqDB_Admin_UserName": {
       "type": "string",
       "minLength": 1,
@@ -116,7 +114,7 @@
     "SQvmAppImageOffer": "JDK",
     "SQvmAppWindowsOSVersion": "JDK_8",
     "SQvmAppOSDiskName": "SQvmAppOSDisk",
-    "SQvmAppVmSize": "Standard_DS1_v2",
+    "SQvmAppVmSize": "Standard_DS2_v2",
     "SQvmAppVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'SQvnet')]",
     "SQvmAppSubnetRef": "[concat(variables('SQvmAppVnetID'), '/subnets/', variables('SQvnetExternalSubnetName'))]",
     "SQvmAppStorageAccountContainerName": "vhds",
@@ -135,7 +133,7 @@
       "name": "deploySQLDB",
       "type": "Microsoft.Resources/deployments",
       "properties": {
-        "mode": "incremental",
+        "mode": "Incremental",
         "templateLink": {
           "uri": "[variables('SQDBTemplateLocation')]",
           "contentVersion": "1.0.0.0"
@@ -259,7 +257,7 @@
             "sku": "[variables('SQvmAppWindowsOSVersion')]",
             "version": "latest"
           },
-         "osDisk": {
+          "osDisk": {
             "name": "SQvmAppOSDisk",
             "vhd": {
               "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('SQstorageName')), '2015-06-15').primaryEndpoints.blob, variables('SQvmAppStorageAccountContainerName'),'/',variables('SQvmAppOSDiskName'),'.vhd')]"
@@ -296,12 +294,11 @@
               "properties": {
                 "nodeName": "[parameters('sqVM_AppName')]",
                 "sqVM_AppAdmin_UserName": "[parameters('sqVM_AppAdmin_UserName')]",
-                "connectionString":"[replace(reference('deploySQLDB').outputs.jdbcConnString.value,'{your_password_here}',parameters('sqDB_Admin_Password'))]",
-                "sqVmAdminPwd": "[parameters('sqVM_AppAdmin_Password')]" 
+                "connectionString": "[replace(reference('deploySQLDB').outputs.jdbcConnString.value,'{your_password_here}',parameters('sqDB_Admin_Password'))]",
+                "sqVmAdminPwd": "[parameters('sqVM_AppAdmin_Password')]"
               }
             },
-            "protectedSettings": {
-            }
+            "protectedSettings": {}
           }
         }
       ]
@@ -311,7 +308,7 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "SQpublicIP"
       },
@@ -327,7 +324,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "SQnsgApp"
       },
